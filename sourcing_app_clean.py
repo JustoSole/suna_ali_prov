@@ -959,24 +959,38 @@ def main_streamlit():
             # Botón profesional para Google Sheets
             st.markdown("<div style='margin: 2rem 0; text-align: center;'>", unsafe_allow_html=True)
             if sheets_enabled:
-                if st.button(f"📋 Exportar a Google Sheets", key=f"sheets_{query}", 
-                           help="Crear hoja profesional con análisis completo"):
-                    with st.spinner("🔄 Creando análisis profesional en Google Sheets..."):
-                        # Estadísticas básicas para Google Sheets - CON RATING Y REVIEWS DEL PROVEEDOR
-                        estadisticas_sheets = {
-                            'precio_promedio': precio_promedio,
-                            'moq_promedio': moq_promedio,
-                            'rating_proveedor_promedio': rating_prov_promedio,
-                            'proveedores_con_reviews': proveedores_con_reviews,
-                            'proveedores_verificados': proveedores_verificados,
-                            'total_productos': total_productos
-                        }
+                export_button = st.button(f"📋 Exportar '{query}' a Google Sheets", key=f"sheets_{query}", 
+                                        help="Crear hoja profesional con análisis completo",
+                                        type="primary")
+                
+                if export_button:
+                    try:
+                        with st.spinner("🔄 Creando análisis profesional en Google Sheets..."):
+                            # Estadísticas básicas para Google Sheets
+                            estadisticas_sheets = {
+                                'precio_promedio': precio_promedio,
+                                'moq_promedio': moq_promedio,
+                                'rating_proveedor_promedio': rating_prov_promedio,
+                                'proveedores_con_reviews': proveedores_con_reviews,
+                                'proveedores_verificados': proveedores_verificados,
+                                'total_productos': total_productos
+                            }
+                            
+                            # Llamar función de exportación
+                            from google_sheets_exporter import export_to_google_sheets
+                            url = export_to_google_sheets(query, df_top_n, triad, estadisticas_sheets)
+                            
+                            if url:
+                                st.balloons()
+                                st.success("✅ ¡Datos exportados exitosamente a Google Sheets!")
+                                st.markdown(f"🔗 **[Ver hoja creada]({url})**", unsafe_allow_html=True)
+                                st.info(f"📊 Precio promedio: ${precio_promedio:,.2f} | 📦 MOQ promedio: {moq_promedio:,.0f} pcs | ⭐ Rating proveedor: {rating_prov_promedio:.1f}/5")
+                            else:
+                                st.error("❌ Error durante la exportación a Google Sheets")
+                                
+                    except Exception as e:
+                        st.error(f"❌ Error exportando a Google Sheets: {str(e)}")
                         
-                        url = export_to_google_sheets(query, df_top_n, triad, estadisticas_sheets)
-                    if url:
-                        st.balloons()
-                        st.success("✅ ¡Datos exportados exitosamente a Google Sheets!")
-                        st.info(f"📊 Precio promedio: ${precio_promedio:,.2f} | 📦 MOQ promedio: {moq_promedio:,.0f} pcs | ⭐ Rating proveedor: {rating_prov_promedio:.1f}/5 | 📝 Con reviews: {proveedores_con_reviews}/{total_productos}")
             else:
                 st.markdown("""
                 <div style="background: #f8d7da; border: 1px solid #f5c6cb; 

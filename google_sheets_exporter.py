@@ -197,11 +197,17 @@ class GoogleSheetsExporter:
     def export_triad_data(self, query_title: str, df_data: pd.DataFrame, triad_data: Dict, estadisticas: Dict = None):
         """Exportar datos de tríada con manejo de errores mejorado"""
         try:
+            st.info(f"🔄 Iniciando exportación de '{query_title}' a Google Sheets...")
+            
             if not self.initialized:
+                st.info("🔐 Inicializando conexión a Google Sheets...")
                 if not self.initialize_client():
+                    st.error("❌ No se pudo inicializar Google Sheets")
                     return None
                     
+            st.info("📊 Conectando con el spreadsheet...")
             if not self.get_spreadsheet():
+                st.error("❌ No se pudo acceder al spreadsheet")
                 return None
                 
             # Crear nombre único para el worksheet
@@ -375,16 +381,17 @@ class GoogleSheetsExporter:
             except Exception as dim_error:
                 st.warning(f"⚠️ Algunas dimensiones no se pudieron ajustar: {dim_error}")
             
-            st.success(f"✅ Hoja '{sheet_name}' creada exitosamente con estructura EXACTA de Streamlit")
-            st.info("🖼️ Imágenes con formato =IMAGE(url; 4; 100; 100)")
-            st.info("🔢 Fórmulas insertadas correctamente con update_cell()")
+            st.success(f"✅ Hoja '{sheet_name}' creada exitosamente")
+            st.info("🖼️ Imágenes y fórmulas aplicadas correctamente")
             
-            return worksheet.url
+            # Obtener URL del spreadsheet completo
+            spreadsheet_url = f"https://docs.google.com/spreadsheets/d/{get_google_sheets_spreadsheet_id()}"
+            return spreadsheet_url
             
         except Exception as e:
             st.error(f"❌ Error en exportación: {e}")
-            import traceback
-            st.code(traceback.format_exc())
+            # Mostrar error específico sin traceback completo para no romper la UI
+            st.error(f"Detalles del error: {str(e)}")
             return None
 
     def _fix_alibaba_link(self, original_url: str) -> str:
