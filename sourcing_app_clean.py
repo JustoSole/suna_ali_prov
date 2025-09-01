@@ -520,12 +520,20 @@ def main_streamlit():
         search_mode = "🌐 Búsqueda directa"
         st.markdown("🔍 **Modo:** Búsqueda directa en Alibaba en tiempo real")
         
-        # Input de queries
+        # Input de queries - CON PERSISTENCIA
+        if 'queries_input' not in st.session_state:
+            st.session_state.queries_input = "licuadoras, hornos electricos"
+            
         queries_input = st.text_area(
             "Búsquedas (separadas por coma)",
-            value="licuadoras, hornos electricos",
-            help="Ej: licuadoras, hornos electricos"
+            value=st.session_state.queries_input,
+            help="Ej: licuadoras, hornos electricos",
+            key="queries_textarea"
         )
+        
+        # Actualizar session_state cuando cambie
+        if queries_input != st.session_state.queries_input:
+            st.session_state.queries_input = queries_input
         
         # Parámetros
         top_n = st.slider("Top N candidatos", 5, 50, 20)
@@ -571,6 +579,13 @@ def main_streamlit():
         st.info("📋 **Exportación automática** a Google Sheets con fórmulas profesionales")
         st.info("🎯 **Filtros de calidad** - Proveedores verificados y certificaciones")
         
+        # Mostrar datos persistidos
+        if st.session_state.search_results:
+            st.success(f"💾 **Datos guardados:** {', '.join(st.session_state.search_results.keys())}")
+            if st.button("🗑️ Limpiar caché de búsquedas", help="Elimina todos los datos guardados"):
+                st.session_state.clear()
+                st.rerun()
+        
     # Procesar queries
     queries = [q.strip() for q in queries_input.split(',') if q.strip()]
     
@@ -584,32 +599,37 @@ def main_streamlit():
     for query in queries:
         with st.expander(f"🔍 **{query.title()}**", expanded=True):
             
-            # Búsqueda directa en Alibaba
-            raw_data = None
-            
+            # Búsqueda directa en Alibaba - CON PERSISTENCIA
             if st.button(f"🔍 Buscar '{query}' en Alibaba", key=f"search_{query}"):
-                raw_data = analyzer.search_products_direct(query)
+                with st.spinner(f"🔍 Buscando '{query}' en Alibaba..."):
+                    raw_data = analyzer.search_products_direct(query)
+                    if raw_data:
+                        # Guardar en session_state para persistir
+                        st.session_state.search_results[query] = raw_data
+                        st.success(f"✅ Encontrados {len(raw_data)} productos")
+            
+            # Verificar si hay datos en session_state
+            if query in st.session_state.search_results:
+                raw_data = st.session_state.search_results[query]
+            else:
+                raw_data = None
                         
             if not raw_data:
+                st.info(f"👆 Haz click en el botón para buscar productos de '{query}'")
                 continue
                 
-            st.success(f"✅ Cargados {len(raw_data)} productos")
+            st.info(f"📊 Analizando {len(raw_data)} productos de '{query}'...")
             
-            # DEBUG: Mostrar estadísticas de imágenes extraídas
-            images_found = sum(1 for item in raw_data if item.get('image_link') and item.get('image_link') != 'null')
-            if images_found > 0:
-                st.info(f"🖼️ Imágenes encontradas: {images_found}/{len(raw_data)} productos ({images_found/len(raw_data)*100:.1f}%)")
+            # Normalizar datos - CACHEAR RESULTADOS
+            cache_key = f"{query}_normalized"
+            if cache_key not in st.session_state or len(raw_data) != st.session_state.get(f"{query}_raw_count", 0):
+                st.info("🔧 Normalizando formatos de precios y extrayendo imágenes...")
+                df = analyzer.normalize_data(raw_data, fx_usd_ars=fx_usd_ars)
+                # Guardar en cache
+                st.session_state[cache_key] = df
+                st.session_state[f"{query}_raw_count"] = len(raw_data)
             else:
-                st.info(f"🔧 **Sistema de imágenes mejorado**: Se generarán URLs automáticamente para productos sin imagen. "
-                       f"Las imágenes aparecerán en la interfaz usando patrones de URLs de Alibaba.")
-                        
-            # Mostrar información de mejoras si hay pocos productos con imágenes
-            if images_found < len(raw_data) * 0.5:  # Menos del 50% tienen imágenes
-                st.info("💡 **Scraper mejorado**: La próxima búsqueda directa usará selectores avanzados para extraer más imágenes.")
-            
-            # Normalizar datos
-            st.info("🔧 Normalizando formatos de precios y extrayendo imágenes...")
-            df = analyzer.normalize_data(raw_data, fx_usd_ars=fx_usd_ars)
+                df = st.session_state[cache_key]
             
             if len(df) == 0:
                 st.error("❌ No hay productos válidos")
@@ -675,14 +695,29 @@ def main_streamlit():
             else:
                 st.info("📋 No se aplicaron filtros - mostrando todos los productos")
                 
-            # Calcular precios landed
-            df_final = analyzer.calculate_landed_price(df_filtered, landed_multiplier, fx_usd_ars)
+            # Calcular precios landed - CACHEAR CON PARÁMETROS
+            landed_cache_key = f"{query}_landed_{landed_multiplier}_{fx_usd_ars}_{len(df_filtered)}"
+            if landed_cache_key not in st.session_state:
+                df_final = analyzer.calculate_landed_price(df_filtered, landed_multiplier, fx_usd_ars)
+                st.session_state[landed_cache_key] = df_final
+            else:
+                df_final = st.session_state[landed_cache_key]
             
-            # Top-N para análisis
-            df_top_n = df_final.nsmallest(top_n, 'unit_price_norm_usd')
+            # Top-N para análisis - CACHEAR
+            topn_cache_key = f"{query}_topn_{top_n}_{len(df_final)}"
+            if topn_cache_key not in st.session_state:
+                df_top_n = df_final.nsmallest(top_n, 'unit_price_norm_usd')
+                st.session_state[topn_cache_key] = df_top_n
+            else:
+                df_top_n = st.session_state[topn_cache_key]
             
-            # Calcular tríada
-            triad = analyzer.calculate_triad(df_top_n, min_reviews_quality)
+            # Calcular tríada - CACHEAR
+            triad_cache_key = f"{query}_triad_{min_reviews_quality}_{len(df_top_n)}"
+            if triad_cache_key not in st.session_state:
+                triad = analyzer.calculate_triad(df_top_n, min_reviews_quality)
+                st.session_state[triad_cache_key] = triad
+            else:
+                triad = st.session_state[triad_cache_key]
             
             # Calcular estadísticas simples - CON RATING REAL DEL PROVEEDOR
             precio_promedio = df_final['unit_price_norm_usd'].mean()
