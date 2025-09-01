@@ -34,10 +34,15 @@ class GoogleSheetsExporter:
             # Primero intentar usar credenciales desde Streamlit secrets
             credentials = get_google_credentials()
             if credentials:
-                # Usar credenciales desde secrets.toml
-                self.client = gspread.service_account_from_dict(credentials)
-                self.initialized = True
-                return True
+                try:
+                    # Usar credenciales desde secrets.toml
+                    self.client = gspread.service_account_from_dict(credentials)
+                    self.initialized = True
+                    st.success("✅ Google Sheets conectado exitosamente")
+                    return True
+                except Exception as e:
+                    st.error(f"❌ Error con credenciales de Google: {e}")
+                    return False
             
             # Fallback: buscar archivos de credenciales locales
             possible_paths = [

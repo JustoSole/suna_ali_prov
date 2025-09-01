@@ -200,6 +200,8 @@ class SourcingAnalyzer:
     def __init__(self):
         self.data_path = Path("data")
         self.out_path = Path("out")
+        # Crear directorios automáticamente
+        self.data_path.mkdir(exist_ok=True)
         self.out_path.mkdir(exist_ok=True)
         
         # Importar scraper si está disponible
@@ -257,11 +259,15 @@ class SourcingAnalyzer:
             try:
                 products = self.scraper.search_products(query)
                 if products:
-                    # Guardar datos
-                    filename = self.data_path / f"{query}.json"
-                    with open(filename, 'w', encoding='utf-8') as f:
-                        json.dump(products, f, indent=2, ensure_ascii=False)
-                    st.success(f"✅ Encontrados {len(products)} productos")
+                    # Guardar datos en caché
+                    try:
+                        filename = self.data_path / f"{query}.json"
+                        with open(filename, 'w', encoding='utf-8') as f:
+                            json.dump(products, f, indent=2, ensure_ascii=False)
+                        st.success(f"✅ Encontrados {len(products)} productos (guardado en caché)")
+                    except Exception as e:
+                        st.warning(f"⚠️ No se pudo guardar caché: {e}")
+                        st.success(f"✅ Encontrados {len(products)} productos")
                     return products
             except Exception as e:
                 st.error(f"❌ Error durante scraping: {e}")
@@ -547,11 +553,9 @@ def main_streamlit():
         </div>
         """, unsafe_allow_html=True)
         
-        # Modo de búsqueda
-        search_mode = st.radio(
-            "🔍 Modo de búsqueda",
-            ["📁 Datos locales", "🌐 Búsqueda directa"]
-        )
+        # Solo búsqueda directa disponible
+        search_mode = "🌐 Búsqueda directa"
+        st.markdown("🔍 **Modo:** Búsqueda directa en Alibaba en tiempo real")
         
         # Input de queries
         queries_input = st.text_area(
@@ -599,86 +603,10 @@ def main_streamlit():
             st.warning(f"⚠️ Google Sheets no disponible - funcionando en modo solo lectura")
             sheets_enabled = False
         
-        # NUEVO: Test de extracción de imágenes
-        st.subheader("🖼️ Test Extracción de Imágenes")
-        with st.expander("Probar scraping con imágenes mejoradas", expanded=False):
-            test_query = st.text_input("Query para probar scraping:", value="blender", help="Producto para probar la extracción de imágenes")
-            if st.button("🔍 Probar Scraping con Imágenes", disabled=(not test_query)):
-                with st.spinner("Probando extracción de imágenes..."):
-                    if analyzer.scraper:
-                        try:
-                            test_results = analyzer.scraper.search_products(test_query, max_results=5)
-                            if test_results:
-                                st.success(f"✅ Encontrados {len(test_results)} productos de prueba")
-                                images_with_urls = [p for p in test_results if p.get('image_link')]
-                                st.info(f"🖼️ Productos con imágenes: {len(images_with_urls)}/{len(test_results)}")
-                                
-                                # Mostrar algunos ejemplos
-                                for i, product in enumerate(test_results[:3]):
-                                    st.write(f"**Producto {i+1}:** {product.get('product_title', 'Sin título')[:50]}...")
-                                    img_url = product.get('image_link')
-                                    if img_url:
-                                        st.write(f"🖼️ Imagen: {img_url}")
-                                        try:
-                                            st.image(img_url, width=150)
-                                        except:
-                                            st.write("❌ Error cargando imagen")
-                                    else:
-                                        st.write("❌ Sin imagen extraída")
-                            else:
-                                st.error("❌ No se encontraron productos")
-                        except Exception as e:
-                            st.error(f"❌ Error en scraping de prueba: {e}")
-                    else:
-                        st.error("❌ Scraper no disponible")
-
-        # Test de normalización de precios
-        st.subheader("🧪 Test Normalización Precios")
-        with st.expander("Probar formato de precios", expanded=False):
-            test_price = st.text_input("Ingresa un precio para probar:", 
-                                     value="1,50", 
-                                     help="Ejemplos: 1,50 | 1.500,50 | 1,500.50")
-            if test_price:
-                normalized = normalize_price(test_price)
-                st.write(f"**Original:** `{test_price}`")
-                st.write(f"**Normalizado:** `{normalized}`")
-                
-                # Ejemplos comunes
-                st.markdown("**Ejemplos de conversión:**")
-                examples = [
-                    ("1,50", "Europeo: coma decimal"),
-                    ("1.500,50", "Europeo: punto miles, coma decimal"), 
-                    ("1,500.50", "Americano: coma miles, punto decimal"),
-                    ("150", "Entero simple"),
-                    ("1,234", "Miles o decimal? (interpretado como miles)"),
-                    ("12.34", "Americano: punto decimal"),
-                    ("USD 1,50", "Con símbolo de moneda"),
-                    ("$12.50", "Con símbolo dólar"),
-                    ("-5.50", "Número negativo")
-                ]
-                for ex, desc in examples:
-                    result = normalize_price(ex)
-                    st.write(f"`{ex}` → `{result:,.2f}` • {desc}")
-        
-        # Información sobre las estadísticas
-        st.subheader("📊 Estadísticas")
-        with st.expander("Ver estadísticas incluidas", expanded=False):
-            st.markdown("""
-            **🎯 En la Interfaz:**
-            - 💰 Precio Promedio
-            - 📦 MOQ Promedio 
-            - ⭐ Rating Promedio
-            - ✅ Proveedores Verificados
-            
-            **📋 En Google Sheets:**
-            - `=AVERAGE(E:E)` - Precio promedio
-            - `=AVERAGE(G:G)` - MOQ promedio
-            - `=AVERAGE(H:H)` - Rating promedio
-            - `=COUNTIF(J:J,"Sí")` - Proveedores verificados
-            
-            **🔗 Títulos Clickeables:**
-            - Los títulos de productos en la tabla son enlaces directos a Alibaba
-            """)
+        st.subheader("📊 Información")
+        st.info("🔍 **Búsqueda directa en Alibaba** - Scraping en tiempo real con Oxylabs")
+        st.info("📋 **Exportación automática** a Google Sheets con fórmulas profesionales")
+        st.info("🎯 **Filtros de calidad** - Proveedores verificados y certificaciones")
         
     # Procesar queries
     queries = [q.strip() for q in queries_input.split(',') if q.strip()]
@@ -693,27 +621,11 @@ def main_streamlit():
     for query in queries:
         with st.expander(f"🔍 **{query.title()}**", expanded=True):
             
-            # Cargar datos
+            # Búsqueda directa en Alibaba
             raw_data = None
             
-            if search_mode == "📁 Datos locales":
-                raw_data = analyzer.load_scraper_data(query)
-                if not raw_data:
-                    st.error(f"❌ No se encontraron datos para '{query}'")
-                    if st.button(f"🌐 Buscar en Alibaba", key=f"search_direct_{query}"):
-                        raw_data = analyzer.search_products_direct(query)
-                    else:
-                        st.info(f"💡 Asegúrate de que existe: `data/{query}.json` o `data/{query}.csv`")
-                        continue
-                        
-            elif search_mode == "🌐 Búsqueda directa":
-                if st.button(f"🔍 Buscar '{query}' en Alibaba", key=f"search_{query}"):
-                    raw_data = analyzer.search_products_direct(query)
-                if not raw_data:
-                    # Fallback a datos locales
-                    raw_data = analyzer.load_scraper_data(query)
-                    if raw_data:
-                        st.info("📁 Usando datos locales existentes")
+            if st.button(f"🔍 Buscar '{query}' en Alibaba", key=f"search_{query}"):
+                raw_data = analyzer.search_products_direct(query)
                         
             if not raw_data:
                 continue

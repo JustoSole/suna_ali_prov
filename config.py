@@ -61,9 +61,12 @@ def get_google_sheets_spreadsheet_id() -> str:
 def get_google_credentials() -> Optional[dict]:
     """Obtener credenciales de Google desde Streamlit secrets"""
     try:
-        # En Streamlit Cloud, las credenciales se configuran como un dict completo
-        return st.secrets["google_credentials"]
-    except (KeyError, AttributeError):
+        # Intentar obtener credenciales desde secrets
+        if hasattr(st, 'secrets') and "google_credentials" in st.secrets:
+            return dict(st.secrets["google_credentials"])
+        return None
+    except Exception as e:
+        print(f"Error obteniendo credenciales Google: {e}")
         return None
 
 def get_app_config() -> dict:
