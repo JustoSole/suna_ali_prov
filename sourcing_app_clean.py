@@ -501,6 +501,9 @@ class SourcingAnalyzer:
         }
 
 def main_streamlit():
+    # Inicializar session_state para persistir datos
+    if 'search_results' not in st.session_state:
+        st.session_state.search_results = {}
     
     analyzer = SourcingAnalyzer()
     # sheets_manager reemplazado por google_sheets_exporter.py
