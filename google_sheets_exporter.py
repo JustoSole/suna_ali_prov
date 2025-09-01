@@ -224,7 +224,7 @@ class GoogleSheetsExporter:
             # Headers profesionales sin emojis
             headers = [
                 "IMAGEN", "PRODUCTO", "PROVEEDOR", "VERIFICADO", 
-                "PRECIO_USD", "LANDED_USD", "CANTIDAD MINIMA PEDIDO", "RATING_PROVEEDOR", 
+                "PRECIO_USD", "VALOR_FINAL", "CANTIDAD_MINIMA_PEDIDO", "RATING_PROVEEDOR", 
                 "REVIEWS_PROVEEDOR", "CERTIFICACIONES", "LINK_PROVEEDOR", 
                 "LINK_PRODUCTO", "CANTIDAD", "COSTO_TOTAL"
             ]
@@ -270,8 +270,8 @@ class GoogleSheetsExporter:
                         str(product.get('companyName', ''))[:40] + ('...' if len(str(product.get('companyName', ''))) > 40 else ''),  # C: PROVEEDOR
                         "Sí" if product.get('verified_supplier') else "No",  # D: VERIFICADO
                         product.get('unit_price_norm_usd', 0),   # E: PRECIO_USD
-                        product.get('landed_est_usd', 0),        # F: LANDED_USD
-                        product.get('moq', 0),                   # G: CANTIDAD MINIMA PEDIDO
+                        product.get('landed_est_usd', 0),        # F: VALOR_FINAL
+                        product.get('moq', 0),                   # G: CANTIDAD_MINIMA_PEDIDO
                         product.get('supplier_rating', 0),       # H: RATING_PROVEEDOR
                         product.get('supplier_reviews_count', 0), # I: REVIEWS_PROVEEDOR
                         cert_text,                               # J: CERTIFICACIONES
@@ -335,8 +335,8 @@ class GoogleSheetsExporter:
                         str(row.get('companyName', ''))[:40] + ('...' if len(str(row.get('companyName', ''))) > 40 else ''),  # C: PROVEEDOR
                         "Sí" if row.get('verified_supplier') else "No",  # D: VERIFICADO
                         row.get('unit_price_norm_usd', 0),       # E: PRECIO_USD
-                        row.get('landed_est_usd', 0),            # F: LANDED_USD
-                        row.get('moq', 0),                       # G: CANTIDAD MINIMA PEDIDO
+                        row.get('landed_est_usd', 0),            # F: VALOR_FINAL
+                        row.get('moq', 0),                       # G: CANTIDAD_MINIMA_PEDIDO
                         row.get('supplier_rating', 0),           # H: RATING_PROVEEDOR
                         row.get('supplier_reviews_count', 0),    # I: REVIEWS_PROVEEDOR
                         cert_text,                               # J: CERTIFICACIONES
@@ -376,7 +376,7 @@ class GoogleSheetsExporter:
                 self.adjust_column_width_safe(worksheet, 1, 1, 150)  # Columna A (IMAGEN)
                 self.adjust_column_width_safe(worksheet, 2, 2, 300)  # Columna B (PRODUCTO)  
                 self.adjust_column_width_safe(worksheet, 3, 3, 200)  # Columna C (PROVEEDOR)
-                self.adjust_column_width_safe(worksheet, 7, 7, 200)  # Columna G (CANTIDAD MINIMA PEDIDO)
+                self.adjust_column_width_safe(worksheet, 7, 7, 200)  # Columna G (CANTIDAD_MINIMA_PEDIDO)
                 self.adjust_column_width_safe(worksheet, 10, 12, 200)  # Columnas J-L (certificaciones y links)
             except Exception as dim_error:
                 st.warning(f"⚠️ Algunas dimensiones no se pudieron ajustar: {dim_error}")

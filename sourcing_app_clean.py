@@ -540,7 +540,7 @@ def main_streamlit():
         
         # Parámetros
         top_n = st.slider("Top N candidatos", 5, 50, 20)
-        landed_multiplier = st.slider("Multiplicador Landed", 1.5, 5.0, 3.0, 0.1)
+        landed_multiplier = st.slider("Multiplicador Valor Final", 1.5, 5.0, 3.0, 0.1)
         fx_usd_ars = st.number_input("FX USD→ARS (opcional)", 0.0, 2000.0, 0.0)
         
         # NUEVOS FILTROS MEJORADOS
@@ -810,12 +810,14 @@ def main_streamlit():
                         price_usd = product.get('unit_price_norm_usd', 0)
                         landed_usd = product.get('landed_est_usd', 0)
                         
-                        # Cantidad simple
+                        # Cantidad con MOQ por defecto
+                        moq_default = max(1, int(product.get('moq', 1)))
                         quantity = st.number_input(
                             f"Cantidad", 
                             min_value=1, 
-                            value=max(1, int(product.get('moq', 1))), 
-                            key=f"qty_{query}_{key}"
+                            value=moq_default,
+                            key=f"qty_{query}_{key}",
+                            help=f"MOQ: {moq_default:,} pcs"
                         )
                         
                         total_cost = quantity * landed_usd
@@ -825,7 +827,7 @@ def main_streamlit():
                         <div style="background: #f8f9fa; padding: 0.8rem; border-radius: 5px; margin: 0.5rem 0;">
                             <div style="margin-bottom: 0.3rem;"><strong>🏭 Proveedor:</strong><br/>{product.get('companyName', 'N/A')[:35]}</div>
                             <div style="margin-bottom: 0.3rem;"><strong>💵 Precio:</strong> <span style="color: {color}; font-weight: bold;">${price_usd:,.2f}</span></div>
-                            <div style="margin-bottom: 0.3rem;"><strong>🚢 Landed:</strong> <span style="color: #dc3545; font-weight: bold;">${landed_usd:,.2f}</span></div>
+                            <div style="margin-bottom: 0.3rem;"><strong>💰 Valor Final:</strong> <span style="color: #dc3545; font-weight: bold;">${landed_usd:,.2f}</span></div>
                             <div style="margin-bottom: 0.3rem;"><strong>💰 Total:</strong> <span style="color: #28a745; font-weight: bold;">${total_cost:,.2f}</span></div>
                             <div style="margin-bottom: 0.3rem;"><strong>📦 MOQ:</strong> {int(product.get('moq', 0)):,} pcs</div>
                             <div style="margin-bottom: 0.3rem;"><strong>⭐ Rating Proveedor:</strong> {product.get('supplier_rating', 0):.1f}/5</div>
@@ -905,7 +907,7 @@ def main_streamlit():
             display_df['📦 Producto'] = display_df.apply(create_full_title, axis=1)
             display_df['🏭 Proveedor'] = display_df['companyName'].str[:30] + '...'
             display_df['💰 Precio USD'] = display_df['unit_price_norm_usd'].apply(lambda x: f"${x:,.2f}")
-            display_df['🚢 Landed USD'] = display_df['landed_est_usd'].apply(lambda x: f"${x:,.2f}")
+            display_df['💰 Valor Final'] = display_df['landed_est_usd'].apply(lambda x: f"${x:,.2f}")
             display_df['📦 MOQ'] = display_df['moq'].astype(int).apply(lambda x: f"{x:,}")
             display_df['⭐ Rating Proveedor'] = display_df['supplier_rating'].apply(lambda x: f"{x:.1f}/5" if x > 0 else "Sin rating")
             display_df['📝 Reviews Proveedor'] = display_df['supplier_reviews_count'].astype(int).apply(lambda x: f"{x:,} reviews" if x > 0 else "Sin reviews")
@@ -943,7 +945,7 @@ def main_streamlit():
             # DataFrame final - CON RATING Y REVIEWS DEL PROVEEDOR CORRECTO
             final_df = display_df[[
                 'image_link', '📦 Producto', '🏭 Proveedor', '✅ Verificado',
-                '💰 Precio USD', '🚢 Landed USD', '📦 MOQ', 
+                '💰 Precio USD', '💰 Valor Final', '📦 MOQ', 
                 '⭐ Rating Proveedor', '📝 Reviews Proveedor', '🏷️ Certificaciones',
                 '🏭 Link Proveedor', '🔗 Link Producto'
             ]].copy()
