@@ -266,8 +266,8 @@ class GoogleSheetsExporter:
                     # Preparar fila de datos SIN la fórmula de imagen (se agregará por separado)
                     row_data = [
                         "",  # A: IMAGEN (se llenará con fórmula por separado)
-                        str(product.get('title', ''))[:80] + ('...' if len(str(product.get('title', ''))) > 80 else ''),  # B: PRODUCTO  
-                        str(product.get('companyName', ''))[:40] + ('...' if len(str(product.get('companyName', ''))) > 40 else ''),  # C: PROVEEDOR
+                        str(product.get('title', '')),  # B: PRODUCTO
+                        str(product.get('companyName', '')),  # C: PROVEEDOR
                         "Sí" if product.get('verified_supplier') else "No",  # D: VERIFICADO
                         product.get('unit_price_norm_usd', 0),   # E: PRECIO_USD
                         product.get('landed_est_usd', 0),        # F: VALOR_FINAL
@@ -331,8 +331,8 @@ class GoogleSheetsExporter:
                     # Preparar fila de datos SIN la fórmula de imagen (se agregará por separado)
                     row_data = [
                         "",  # A: IMAGEN (se llenará con fórmula por separado)
-                        str(row.get('title', ''))[:80] + ('...' if len(str(row.get('title', ''))) > 80 else ''),  # B: PRODUCTO
-                        str(row.get('companyName', ''))[:40] + ('...' if len(str(row.get('companyName', ''))) > 40 else ''),  # C: PROVEEDOR
+                        str(row.get('title', '')),  # B: PRODUCTO
+                        str(row.get('companyName', '')),  # C: PROVEEDOR
                         "Sí" if row.get('verified_supplier') else "No",  # D: VERIFICADO
                         row.get('unit_price_norm_usd', 0),       # E: PRECIO_USD
                         row.get('landed_est_usd', 0),            # F: VALOR_FINAL

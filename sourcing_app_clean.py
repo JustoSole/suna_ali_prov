@@ -825,7 +825,7 @@ def main_streamlit():
                         # INFORMACIÓN CLAVE - LIMPIA Y CLARA
                         st.markdown(f"""
                         <div style="background: #f8f9fa; padding: 0.8rem; border-radius: 5px; margin: 0.5rem 0;">
-                            <div style="margin-bottom: 0.3rem;"><strong>🏭 Proveedor:</strong><br/>{product.get('companyName', 'N/A')[:35]}</div>
+                            <div style="margin-bottom: 0.3rem;"><strong>🏭 Proveedor:</strong><br/>{product.get('companyName', 'N/A')}</div>
                             <div style="margin-bottom: 0.3rem;"><strong>💵 Precio:</strong> <span style="color: {color}; font-weight: bold;">${price_usd:,.2f}</span></div>
                             <div style="margin-bottom: 0.3rem;"><strong>💰 Valor Final:</strong> <span style="color: #dc3545; font-weight: bold;">${landed_usd:,.2f}</span></div>
                             <div style="margin-bottom: 0.3rem;"><strong>💰 Total:</strong> <span style="color: #28a745; font-weight: bold;">${total_cost:,.2f}</span></div>
@@ -905,7 +905,7 @@ def main_streamlit():
                 return title
                 
             display_df['📦 Producto'] = display_df.apply(create_full_title, axis=1)
-            display_df['🏭 Proveedor'] = display_df['companyName'].str[:30] + '...'
+            display_df['🏭 Proveedor'] = display_df['companyName']
             display_df['💰 Precio USD'] = display_df['unit_price_norm_usd'].apply(lambda x: f"${x:,.2f}")
             display_df['💰 Valor Final'] = display_df['landed_est_usd'].apply(lambda x: f"${x:,.2f}")
             display_df['📦 MOQ'] = display_df['moq'].astype(int).apply(lambda x: f"{x:,}")
