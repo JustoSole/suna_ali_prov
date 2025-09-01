@@ -38,7 +38,6 @@ class GoogleSheetsExporter:
                     # Usar credenciales desde secrets.toml
                     self.client = gspread.service_account_from_dict(credentials)
                     self.initialized = True
-                    st.success("✅ Google Sheets conectado exitosamente")
                     return True
                 except Exception as e:
                     st.error(f"❌ Error con credenciales de Google: {e}")

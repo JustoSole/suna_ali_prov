@@ -61,9 +61,11 @@ def get_google_sheets_spreadsheet_id() -> str:
 def get_google_credentials() -> Optional[dict]:
     """Obtener credenciales de Google desde Streamlit secrets"""
     try:
-        # Intentar obtener credenciales desde secrets
-        if hasattr(st, 'secrets') and "google_credentials" in st.secrets:
-            return dict(st.secrets["google_credentials"])
+        # Intentar obtener credenciales desde google_service_account
+        if hasattr(st, 'secrets') and "google_service_account" in st.secrets:
+            import json
+            credentials_json = st.secrets["google_service_account"]["credentials"]
+            return json.loads(credentials_json)
         return None
     except Exception as e:
         print(f"Error obteniendo credenciales Google: {e}")

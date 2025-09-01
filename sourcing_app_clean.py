@@ -559,11 +559,11 @@ def main_streamlit():
             sheets_enabled = test_exporter.initialize_client()
             
             if sheets_enabled:
-                st.success("✅ Google Sheets disponible")
+                st.success("✅ Google Sheets conectado correctamente")
             else:
                 st.warning("⚠️ Google Sheets no configurado - funcionando en modo solo lectura")
         except Exception as e:
-            st.warning(f"⚠️ Google Sheets no disponible - funcionando en modo solo lectura")
+            st.error(f"❌ Error Google Sheets: {e}")
             sheets_enabled = False
         
         st.subheader("📊 Información")

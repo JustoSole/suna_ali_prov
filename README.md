@@ -26,17 +26,20 @@ password = "tu_oxylabs_password"
 [google_sheets]
 spreadsheet_id = "tu_google_sheets_id"
 
-[google_credentials]
-type = "service_account"
-project_id = "tu_project_id"
-private_key_id = "tu_private_key_id"
-private_key = "-----BEGIN PRIVATE KEY-----\ntu_private_key\n-----END PRIVATE KEY-----\n"
-client_email = "tu_service_account_email"
-client_id = "tu_client_id"
-auth_uri = "https://accounts.google.com/o/oauth2/auth"
-token_uri = "https://oauth2.googleapis.com/token"
-auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
-client_x509_cert_url = "tu_cert_url"
+[google_service_account]
+credentials = """{
+  "type": "service_account",
+  "project_id": "tu_project_id",
+  "private_key_id": "tu_private_key_id",
+  "private_key": "-----BEGIN PRIVATE KEY-----\\ntu_private_key\\n-----END PRIVATE KEY-----\\n",
+  "client_email": "tu_service_account_email",
+  "client_id": "tu_client_id",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "tu_cert_url",
+  "universe_domain": "googleapis.com"
+}"""
 
 [app]
 max_products = 50
