@@ -16,7 +16,7 @@ import requests
 
 # Configuración
 st.set_page_config(
-    page_title="Sourcing Triads App",
+    page_title="Suna Solutions Proveedores IA",
     page_icon="🏭",
     layout="wide"
 )
@@ -501,43 +501,6 @@ class SourcingAnalyzer:
         }
 
 def main_streamlit():
-    """Interfaz principal Streamlit"""
-    # Header profesional
-    st.markdown("""
-    <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); 
-                padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
-        <h1 style="color: white; text-align: center; margin: 0;">
-            🏭 Sourcing Triads Pro
-        </h1>
-        <p style="color: #f0f0f0; text-align: center; margin: 0.5rem 0 0 0; font-size: 1.2rem;">
-            Análisis Profesional de Productos Alibaba con Inteligencia de Datos
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Información adicional profesional
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("""
-        <div style="background: #f0f2f6; padding: 1rem; border-radius: 8px; text-align: center;">
-            <h3 style="color: #667eea;">📊 Análisis Inteligente</h3>
-            <p>Algoritmos avanzados para encontrar las mejores oportunidades</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div style="background: #f0f2f6; padding: 1rem; border-radius: 8px; text-align: center;">
-            <h3 style="color: #764ba2;">🔄 Automatización</h3>
-            <p>Sincronización automática con Google Sheets</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div style="background: #f0f2f6; padding: 1rem; border-radius: 8px; text-align: center;">
-            <h3 style="color: #667eea;">⭐ Calidad Premium</h3>
-            <p>Filtros de calidad y verificación de proveedores</p>
-        </div>
-        """, unsafe_allow_html=True)
     
     analyzer = SourcingAnalyzer()
     # sheets_manager reemplazado por google_sheets_exporter.py
@@ -1026,43 +989,5 @@ def main_streamlit():
                 """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
     
-    # Footer profesional
-    st.markdown("""
-    <div style="margin-top: 4rem; padding: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); 
-                border-radius: 10px; text-align: center; color: white;">
-        <h3 style="margin: 0 0 1rem 0;">🏭 Sourcing Triads Pro</h3>
-        <p style="margin: 0 0 1rem 0; font-size: 1.1rem;">
-            Plataforma profesional para análisis inteligente de productos Alibaba
-        </p>
-        <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
-            <div style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
-                <div style="font-weight: bold;">Análisis Inteligente</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">Algoritmos avanzados</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔄</div>
-                <div style="font-weight: bold;">Automatización</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">Google Sheets integrado</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">⭐</div>
-                <div style="font-weight: bold;">Calidad Premium</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">Filtros profesionales</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
-                <div style="font-weight: bold;">ROI Optimizado</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">Mejores decisiones</div>
-            </div>
-        </div>
-        <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 2rem 0;">
-        <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">
-            Desarrollado con ❤️ para profesionales del sourcing • 
-            Powered by Streamlit & Google Sheets API
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
 if __name__ == "__main__":
     main_streamlit()
