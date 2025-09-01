@@ -1,15 +1,15 @@
-# 🔐 Template Seguro de Secrets para Streamlit Cloud
+# 🔐 Template de Secrets para Streamlit Cloud
 
-Este archivo contiene el template seguro para configurar los secrets en Streamlit Cloud.
+Este archivo contiene el template exacto para configurar los secrets en Streamlit Cloud.
 
 ## 📋 Instrucciones
 
 1. Ve a tu app en Streamlit Cloud
 2. Settings → Secrets
 3. Copia y pega el contenido de abajo
-4. **IMPORTANTE:** Reemplaza TODOS los valores con tus credenciales reales
+4. **IMPORTANTE:** Reemplaza los valores de Google Credentials con los reales
 
-## 🔑 Template de Configuración
+## 🔑 Secrets Configuration
 
 ```toml
 [apify]
@@ -19,15 +19,11 @@ token = "REEMPLAZAR_CON_TU_APIFY_TOKEN"
 api_key = "REEMPLAZAR_CON_TU_OPENAI_API_KEY"
 
 [meli]
-client_id = "REEMPLAZAR_CON_TU_MELI_CLIENT_ID"
-client_secret = "REEMPLAZAR_CON_TU_MELI_CLIENT_SECRET"
-
-[oxylabs]
-username = "REEMPLAZAR_CON_TU_OXYLABS_USERNAME"
-password = "REEMPLAZAR_CON_TU_OXYLABS_PASSWORD"
+client_id = "1002015801056145"
+client_secret = "C4zpjYsz19K1NaltbU3IWbdWGTYCwsVL"
 
 [google_sheets]
-spreadsheet_id = "REEMPLAZAR_CON_TU_GOOGLE_SHEETS_ID"
+spreadsheet_id = "1rXxEqoDyGo5RIIowyvHjuIlKnJ18QjX7ewleY1PfI4w"
 
 [app]
 max_products = 50
@@ -66,15 +62,3 @@ client_x509_cert_url = "REEMPLAZAR_CON_TU_CERT_URL"
 Después de configurar, verifica que la app muestre:
 - ✅ "Google Sheets disponible" en la sidebar
 - ❌ Si sale "Google Sheets no configurado", revisa las credenciales
-
-## 🔧 APIs utilizadas
-
-- **Apify**: Web scraping alternativo
-- **OpenAI**: Funciones de inteligencia artificial (opcional)
-- **MercadoLibre**: Integración con marketplace
-- **Oxylabs**: Scraping principal de Alibaba (REQUERIDO para búsquedas en tiempo real)
-- **Google Sheets**: Exportación de datos
-
-## 💡 Para tokens de prueba
-
-Consulta el archivo `CONFIGURACION_REAL.md` para obtener valores de prueba válidos.

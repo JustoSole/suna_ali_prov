@@ -618,9 +618,16 @@ def extract_alibaba_reviews_prices(html):
     return out
 
 class AlibabaProductScraper:
-    def __init__(self, username='justo_eHMs7', password='Justo1234567_'):
-        self.username = username
-        self.password = password
+    def __init__(self, username=None, password=None):
+        # Usar config.py para obtener credenciales
+        try:
+            from config import get_oxylabs_username, get_oxylabs_password
+            self.username = username or get_oxylabs_username()
+            self.password = password or get_oxylabs_password()
+        except ImportError:
+            # Fallback para desarrollo local
+            self.username = username or 'justo_eHMs7'
+            self.password = password or 'Justo1234567_'
         self.base_url = "https://realtime.oxylabs.io/v1/queries"
         self.alibaba_base = "https://www.alibaba.com"
 

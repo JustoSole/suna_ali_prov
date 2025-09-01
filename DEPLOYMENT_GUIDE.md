@@ -37,6 +37,10 @@ api_key = "TU_OPENAI_API_KEY_AQUI"
 client_id = "TU_MELI_CLIENT_ID"
 client_secret = "TU_MELI_CLIENT_SECRET"
 
+[oxylabs]
+username = "TU_OXYLABS_USERNAME"
+password = "TU_OXYLABS_PASSWORD"
+
 [google_sheets]
 spreadsheet_id = "TU_GOOGLE_SHEETS_ID"
 
@@ -80,7 +84,15 @@ client_x509_cert_url = "TU_CERT_URL"
 3. Reemplaza `spreadsheet_id` en secrets.toml
 4. Comparte el sheet con el email de la service account
 
-### 4. 🎯 Deploy Final
+### 4. 🔧 Configurar Oxylabs (Para scraping en tiempo real)
+
+**Oxylabs** es el servicio principal para scraping de Alibaba en tiempo real.
+
+- **Username**: Usar el valor proporcionado
+- **Password**: Usar el valor proporcionado  
+- **Funcionalidad**: Permite búsquedas directas en Alibaba con extracción de imágenes y datos completos
+
+### 5. 🎯 Deploy Final
 
 1. Guarda los secrets en Streamlit Cloud
 2. Haz click en **"Deploy!"**

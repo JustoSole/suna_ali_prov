@@ -37,6 +37,20 @@ def get_meli_client_secret() -> str:
     except (KeyError, AttributeError):
         return os.getenv('MELI_CLIENT_SECRET', 'C4zpjYsz19K1NaltbU3IWbdWGTYCwsVL')
 
+def get_oxylabs_username() -> str:
+    """Obtener username de Oxylabs desde Streamlit secrets o env vars"""
+    try:
+        return st.secrets["oxylabs"]["username"]
+    except (KeyError, AttributeError):
+        return os.getenv('OXYLABS_USERNAME', 'justo_eHMs7')
+
+def get_oxylabs_password() -> str:
+    """Obtener password de Oxylabs desde Streamlit secrets o env vars"""
+    try:
+        return st.secrets["oxylabs"]["password"]
+    except (KeyError, AttributeError):
+        return os.getenv('OXYLABS_PASSWORD', 'Justo1234567_')
+
 def get_google_sheets_spreadsheet_id() -> str:
     """Obtener ID del spreadsheet de Google Sheets"""
     try:

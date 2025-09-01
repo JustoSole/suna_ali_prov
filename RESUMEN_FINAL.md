@@ -54,8 +54,9 @@ Tu aplicación **Sourcing Triads Pro** está completamente preparada y subida al
 ## 💡 Para configurar en Streamlit Cloud:
 
 1. **Tokens básicos**: Usa los valores del archivo `CONFIGURACION_REAL.md`
-2. **Google Sheets**: Crea tu service account en Google Cloud Console
-3. **Spreadsheet**: Crea un nuevo Google Sheet y compártelo con la service account
+2. **Oxylabs**: Credenciales incluidas para scraping en tiempo real de Alibaba
+3. **Google Sheets**: Crea tu service account en Google Cloud Console
+4. **Spreadsheet**: Crea un nuevo Google Sheet y compártelo con la service account
 
 ---
 
